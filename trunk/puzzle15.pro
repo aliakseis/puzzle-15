@@ -5,12 +5,13 @@
 TEMPLATE = app
 TARGET = puzzle15
 DESTDIR = ../
-QT += core gui
-CONFIG += release
-DEFINES += QT_LARGEFILE_SUPPORT QT_STATIC_BUILD
+QT += core gui qaxserver qaxcontainer
+CONFIG += debug
+DEFINES += _WINDOWS QT_LARGEFILE_SUPPORT QT_LARGEFILE_SUPPORT QT_STATIC_BUILD QT_DLL QT_HAVE_MMX QT_HAVE_3DNOW QT_HAVE_SSE QT_HAVE_MMXEXT QT_HAVE_SSE2
 INCLUDEPATH += ./GeneratedFiles \
     ./GeneratedFiles/Release \
-    .
+    ./GeneratedFiles/debug \
+    $(QTDIR)/mkspecs/default
 LIBS += -lkernel32 \
     -luser32 \
     -lshell32 \
@@ -29,8 +30,12 @@ LIBS += -lkernel32 \
     -luser32 \
     -ladvapi32
 DEPENDPATH += .
-MOC_DIR += ./GeneratedFiles/release
-OBJECTS_DIR += release
+MOC_DIR += ./GeneratedFiles/debug
+OBJECTS_DIR += debug
 UI_DIR += ./GeneratedFiles
 RCC_DIR += ./GeneratedFiles
 include(puzzle15.pri)
+
+OTHER_FILES +=
+
+

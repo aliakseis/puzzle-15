@@ -22,10 +22,6 @@ using std::setw;
 using std::vector;
 
 
-// program mode settings
-enum { DIMENSION = 4 };
-// end of program mode settings
-
 
 template<int v> struct Int2Type_
 {

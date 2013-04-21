@@ -8,8 +8,6 @@
 
 class MovableButton;
 
-enum MoveStatus { Left, Up, Right, Down };
-
 class puzzle15 : public QMainWindow
 {
     Q_OBJECT
@@ -28,7 +26,7 @@ protected:
     virtual void keyPressEvent(QKeyEvent* event);
 
 private:
-	void AnimatePiece(int row, int col, MoveStatus moveStatus);
+	void AnimatePiece(int row, int col);
 
 private:
     Ui::puzzle15Class ui;

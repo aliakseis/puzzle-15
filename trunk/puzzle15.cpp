@@ -1,8 +1,8 @@
 #include "puzzle15.h"
 
 #include "MovableButton.h"
-
 #include "Worker.h"
+#include "solver.h"
 
 #include <QKeyEvent>
 #include <QThreadPool>
@@ -138,14 +138,14 @@ void puzzle15::onButtonRelease(MovableButton* buttonBeingMoved, int offsetX, int
             {
                 emptyX = col;
                 emptyY = row;
-				AnimatePiece(newRow, newCol, Down);
+				AnimatePiece(newRow, newCol);//Down
                 return;
             }
             if (newRow == row - 1)
             {
                 emptyX = col;
                 emptyY = row;
-				AnimatePiece(newRow, newCol, Up);
+				AnimatePiece(newRow, newCol);//Up
                 return;
             }
         }
@@ -156,21 +156,21 @@ void puzzle15::onButtonRelease(MovableButton* buttonBeingMoved, int offsetX, int
             {
                 emptyX = col;
                 emptyY = row;
-				AnimatePiece(newRow, newCol, Right);
+				AnimatePiece(newRow, newCol);//Right
                 return;
             }
             if (newCol == col - 1)
             {
                 emptyX = col;
                 emptyY = row;
-				AnimatePiece(newRow, newCol, Left);
+				AnimatePiece(newRow, newCol);//Left
                 return;
             }
         }
     }
 }
 
-void puzzle15::AnimatePiece(int row, int col, MoveStatus moveStatus)
+void puzzle15::AnimatePiece(int row, int col)
 {
     QWidget* oldBtn = ui.centralWidget->cellWidget(emptyY, emptyX);
     QWidget* newBtn = ui.centralWidget->cellWidget(row, col);
@@ -282,5 +282,5 @@ void puzzle15::animationStep()
 	case Down: emptyY--; break;
 	}
 
-	AnimatePiece(newRow, newCol, nextMove);
+	AnimatePiece(newRow, newCol);
 }
