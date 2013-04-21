@@ -2,7 +2,7 @@
 
 #include "MovableButton.h"
 #include "Worker.h"
-#include "solver.h"
+#include "../solver/solver.h"
 
 #include <QKeyEvent>
 #include <QThreadPool>

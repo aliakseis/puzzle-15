@@ -1,7 +1,7 @@
 // puzzle15c.cpp : Defines the entry point for the console application.
 //
 
-#include "solver.h"
+#include "../solver/solver.h"
 
 #include <stdlib.h>
 #include <string.h>

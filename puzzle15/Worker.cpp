@@ -1,6 +1,6 @@
 #include "Worker.h"
 
-#include "solver.h"
+#include "../solver/solver.h"
 
 #include <QVector>
 #include <memory.h>
