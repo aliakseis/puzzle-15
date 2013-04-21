@@ -12,6 +12,7 @@ INCLUDEPATH += ./GeneratedFiles \
     ./GeneratedFiles/Release \
     ./GeneratedFiles/debug \
     $(QTDIR)/mkspecs/default
+LIBPATH += ../debug
 LIBS += -lkernel32 \
     -luser32 \
     -lshell32 \
@@ -28,13 +29,16 @@ LIBS += -lkernel32 \
     -lws2_32 \
     -lole32 \
     -luser32 \
-    -ladvapi32
+    -ladvapi32 \
+    -lsolver
 DEPENDPATH += .
 MOC_DIR += ./GeneratedFiles/debug
 OBJECTS_DIR += debug
 UI_DIR += ./GeneratedFiles
 RCC_DIR += ./GeneratedFiles
 include(puzzle15.pri)
+
+
 
 OTHER_FILES +=
 

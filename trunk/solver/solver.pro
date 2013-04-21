@@ -4,7 +4,7 @@
 
 TEMPLATE = lib
 TARGET = solver
-DESTDIR = ./debug
+DESTDIR = ../debug
 CONFIG += staticlib
 INCLUDEPATH += .
 DEPENDPATH += .
