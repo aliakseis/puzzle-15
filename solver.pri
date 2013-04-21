@@ -7,16 +7,5 @@
 message("You are running qmake on a generated .pro file. This may not work!")
 
 
-HEADERS += ./MovableButton.h \
-    ./puzzle15.h \
-    ./Worker.h
-SOURCES += ./main.cpp \
-    ./MovableButton.cpp \
-    ./puzzle15.cpp \
-    ./Worker.cpp
-FORMS += ./puzzle15.ui
-RESOURCES += puzzle15.qrc
-
-OTHER_FILES +=
-
-
+HEADERS += ./solver.h
+SOURCES += ./solver.cpp
