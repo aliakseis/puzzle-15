@@ -1,10 +1,12 @@
 #ifndef PUZZLE15_H
 #define PUZZLE15_H
 
-#include <QtGui/QMainWindow>
+#include <QMainWindow>
 #include "ui_puzzle15.h"
 
 #include <QPropertyAnimation>
+
+#include <memory>
 
 class MovableButton;
 
@@ -13,7 +15,7 @@ class puzzle15 : public QMainWindow
     Q_OBJECT
 
 public:
-    puzzle15(QWidget *parent = 0, Qt::WFlags flags = 0);
+    puzzle15(QWidget *parent = 0, Qt::WindowFlags flags = 0);
     ~puzzle15();
 
     void onButtonRelease(MovableButton* button, int offsetX, int offsetY);

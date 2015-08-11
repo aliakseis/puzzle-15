@@ -14,6 +14,8 @@
 
 #include <algorithm>
 
+#include <memory.h>
+
 
 using std::cout;
 using std::cerr;

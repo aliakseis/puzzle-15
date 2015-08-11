@@ -14,7 +14,7 @@ const char animatingStatus[] = "Animating ...";
 
 const char computingStatus[] = "Computing ...";
 
-puzzle15::puzzle15(QWidget *parent, Qt::WFlags flags)
+puzzle15::puzzle15(QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags)
     , emptyX(3), emptyY(3)
 {
@@ -23,10 +23,10 @@ puzzle15::puzzle15(QWidget *parent, Qt::WFlags flags)
     ui.setupUi(this);
 
     QHeaderView* horizontalHeader = ui.centralWidget->horizontalHeader(); 
-    horizontalHeader->setResizeMode(QHeaderView::Stretch); 
+    horizontalHeader->setSectionResizeMode(QHeaderView::Stretch);
 
     QHeaderView* verticalHeader = ui.centralWidget->verticalHeader(); 
-    verticalHeader->setResizeMode(QHeaderView::Stretch); 
+    verticalHeader->setSectionResizeMode(QHeaderView::Stretch);
 
 	// Now add the buttons in
 	int i = 1;
@@ -203,7 +203,7 @@ void puzzle15::AnimatePiece(int row, int col)
 void puzzle15::keyPressEvent(QKeyEvent* event)
 {
     QMainWindow::keyPressEvent(event);
-    if (122 != event->nativeVirtualKey()) // F11
+    if (event->key() != Qt::Key_F11) // F11
     {
         return;
     }

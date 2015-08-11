@@ -3,34 +3,17 @@
 # ------------------------------------------------------
 
 TEMPLATE = app
-TARGET = puzzle15
+TARGET = puzzle-15
 DESTDIR = ../
-QT += core gui qaxserver qaxcontainer
+QT += core gui widgets
 CONFIG += debug
-DEFINES += _WINDOWS QT_LARGEFILE_SUPPORT QT_LARGEFILE_SUPPORT QT_STATIC_BUILD QT_DLL QT_HAVE_MMX QT_HAVE_3DNOW QT_HAVE_SSE QT_HAVE_MMXEXT QT_HAVE_SSE2
+DEFINES += QT_LARGEFILE_SUPPORT QT_LARGEFILE_SUPPORT QT_STATIC_BUILD QT_DLL QT_HAVE_MMX QT_HAVE_3DNOW QT_HAVE_SSE QT_HAVE_MMXEXT QT_HAVE_SSE2
 INCLUDEPATH += ./GeneratedFiles \
     ./GeneratedFiles/Release \
     ./GeneratedFiles/debug \
     $(QTDIR)/mkspecs/default
 LIBPATH += ../debug
-LIBS += -lkernel32 \
-    -luser32 \
-    -lshell32 \
-    -luuid \
-    -lole32 \
-    -ladvapi32 \
-    -lws2_32 \
-    -lgdi32 \
-    -lcomdlg32 \
-    -loleaut32 \
-    -limm32 \
-    -lwinmm \
-    -lwinspool \
-    -lws2_32 \
-    -lole32 \
-    -luser32 \
-    -ladvapi32 \
-    -lsolver
+LIBS += -lsolver
 DEPENDPATH += .
 MOC_DIR += ./GeneratedFiles/debug
 OBJECTS_DIR += debug
