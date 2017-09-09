@@ -105,10 +105,6 @@ public:
 	int m_emptyX, m_emptyY;
 };
 
-class Solver;
-
-template<int> struct Match { typedef Solver* def; typedef void spec; };
-template<> struct Match<0> { typedef void def; typedef Solver* spec; };
 
 class Solver
 {
@@ -643,10 +639,9 @@ one:
 			&& VerticalLinearConflictTest<2>(count);
 	}
 
-	template <int edge>
-	inline bool HasPass()
+	inline bool HasPass(int derivation)
 	{
-		if (1 == edge)
+        if (1 == derivation)
 		{
 			return HasLastMoves() 
 				&& HasCornerTiles()
@@ -664,12 +659,12 @@ one:
 		}
 		else
 		{
-			return MultiTilesTest(edge);
+            return MultiTilesTest(derivation);
 		}
 	}
 
 	// Solution search routines
-	template <int X, int Y, int edge>
+	template <int X, int Y, bool edge>
 	struct DispatchStep
 	{
 		static bool Do(Solver* pSolver, int emptyX, int emptyY)
@@ -680,7 +675,7 @@ one:
 		}
 	};
 
-	template <int X, int edge>
+	template <int X, bool edge>
 	struct DispatchStep<X, 0, edge>
 	{
 		static bool Do(Solver* pSolver, int emptyX, int emptyY)
@@ -691,7 +686,7 @@ one:
 		}
 	};
 
-	template <int Y, int edge>
+	template <int Y, bool edge>
 	struct DispatchStep<-1, Y, edge>
 	{
 		static bool Do(Solver*, int, int)
@@ -702,30 +697,17 @@ one:
 
 
 	template <int oldEmptyX, int oldEmptyY,
-		int emptyXOffset, int emptyYOffset, bool returning, int edge, typename Next>
+		int emptyXOffset, int emptyYOffset, bool returning, bool edge, typename Next>
 	struct MakeStep
 	{
-
 		static bool Do (Solver* pSolver)
 		{
-			return DoMakeStep<edge>(pSolver);
-		}
-
-		template <int deviation>
-		static bool DoMakeStep(typename Match<deviation>::def pSolver)
-		{
-			return pSolver->DoMakeStep<oldEmptyX, oldEmptyY,
-				emptyXOffset, emptyYOffset, Next, Int2Type_<edge> >();
-		}
-		template <int deviation>
-		static bool DoMakeStep(typename Match<deviation>::spec pSolver)
-		{
-			return pSolver->DoMakeStep0<oldEmptyX, oldEmptyY,
-				emptyXOffset, emptyYOffset, Next>();
-		}
+            return pSolver->DoMakeStep<oldEmptyX, oldEmptyY,
+                emptyXOffset, emptyYOffset, Next>(Int2Type_<edge>());
+        }
 	};
 
-	template <int oldEmptyY, int emptyYOffset, bool returning, int edge, typename Next>
+	template <int oldEmptyY, int emptyYOffset, bool returning, bool edge, typename Next>
 	struct MakeStep<0, oldEmptyY, -1, emptyYOffset, returning, edge, Next>
 	{
 		static bool Do (Solver* pSolver)
@@ -734,7 +716,7 @@ one:
 		}
 	};
 
-	template <int oldEmptyX, int emptyXOffset, bool returning, int edge, typename Next>
+    template <int oldEmptyX, int emptyXOffset, bool returning, bool edge, typename Next>
 	struct MakeStep<oldEmptyX, 0, emptyXOffset, -1, returning, edge, Next>
 	{
 		static bool Do (Solver* pSolver)
@@ -743,7 +725,7 @@ one:
 		}
 	};
 
-	template <int oldEmptyY, int emptyYOffset, bool returning, int edge, typename Next>
+    template <int oldEmptyY, int emptyYOffset, bool returning, bool edge, typename Next>
 	struct MakeStep<DIMENSION-1, oldEmptyY, 1, emptyYOffset, returning, edge, Next>
 	{
 		static bool Do (Solver* pSolver)
@@ -752,7 +734,7 @@ one:
 		}
 	};
 
-	template <int oldEmptyX, int emptyXOffset, bool returning, int edge, typename Next>
+    template <int oldEmptyX, int emptyXOffset, bool returning, bool edge, typename Next>
 	struct MakeStep<oldEmptyX, DIMENSION-1, emptyXOffset, 1, returning, edge, Next>
 	{
 		static bool Do (Solver* pSolver)
@@ -762,7 +744,7 @@ one:
 	};
 
 	template <int oldEmptyX, int oldEmptyY,
-		int emptyXOffset, int emptyYOffset, int edge, typename Next>
+        int emptyXOffset, int emptyYOffset, bool edge, typename Next>
 	struct MakeStep<oldEmptyX, oldEmptyY,
 		emptyXOffset, emptyYOffset, true, edge, Next>
 	{
@@ -781,7 +763,9 @@ one:
 	BoardState m_boardState;
 	vector<unsigned char> m_solution;
 
-	bool m_bTopLeftBlank;
+    int m_nDerivation;
+
+    bool m_bTopLeftBlank;
 
 public:
 	Solver(bool bTopLeftBlank) : m_bTopLeftBlank(bTopLeftBlank) {}
@@ -816,46 +800,41 @@ public:
 				return 0;
 		}
 
-		if (IterateDerivation(Int2Type_<0>()))
+        if (!DispatchStep<DIMENSION - 1, DIMENSION - 1, true>::Do(
+            this, m_boardState.m_emptyX, m_boardState.m_emptyY))
+        {
+            int nDerivation = 1;
+
+            while (m_nDerivation = nDerivation,
+                !DispatchStep<DIMENSION - 1, DIMENSION - 1, false>::Do(
+                this, m_boardState.m_emptyX, m_boardState.m_emptyY))
+            {
+                ++nDerivation;
+            }
+        }
+
+		if (!m_bTopLeftBlank)
 		{
-
-			if (!m_bTopLeftBlank)
+			vector<unsigned char>::iterator end = m_solution.end();
+			for (vector<unsigned char>::iterator it = m_solution.begin()
+				; it != end
+				; ++it)
 			{
-				vector<unsigned char>::iterator end = m_solution.end();
-				for (vector<unsigned char>::iterator it = m_solution.begin()
-					; it != end
-					; ++it)
-				{
-					//it->m_x = DIMENSION - 1 - it->m_x;
-					//it->m_y = DIMENSION - 1 - it->m_y;
-					*it ^= 2;
-				}
+				//it->m_x = DIMENSION - 1 - it->m_x;
+				//it->m_y = DIMENSION - 1 - it->m_y;
+				*it ^= 2;
 			}
-
-			std::reverse(m_solution.begin(), m_solution.end());
-
-			solution = m_solution;
-			return (int) solution.size();
 		}
 
-		return -1;
+		std::reverse(m_solution.begin(), m_solution.end());
+
+		solution = m_solution;
+		return (int) solution.size();
 	}
 
 private:
-	template<typename DeviationType> bool IterateDerivation(DeviationType)
-	{
-		return DispatchStep<DIMENSION-1, DIMENSION-1, DeviationType::value>::Do(
-			this, m_boardState.m_emptyX, m_boardState.m_emptyY)
-			|| IterateDerivation(Int2Type_<DeviationType::value + 1>());
-	}
-
-	bool IterateDerivation(Int2Type_<22>)
-	{
-		return false;
-	}
-
 	template <int emptyX, int emptyY,
-		int emptyXOffset, int emptyYOffset, int edge>
+		int emptyXOffset, int emptyYOffset, bool edge>
 		bool DistributeStep()
 	{
 		return
@@ -867,8 +846,8 @@ private:
 	}
 
 	template <int oldEmptyX, int oldEmptyY,
-		int emptyXOffset, int emptyYOffset, typename Next, typename DeviationType>
-		bool DoMakeStep()
+		int emptyXOffset, int emptyYOffset, typename Next>
+        bool DoMakeStep(Int2Type_<false>)
 	{
 		enum { newEmptyX = oldEmptyX + emptyXOffset };
 		enum { newEmptyY = oldEmptyY + emptyYOffset };
@@ -887,12 +866,14 @@ private:
 			m_boardState.m_cells[oldEmptyX][oldEmptyY] = cell;
 			m_boardState.m_cells[newEmptyX][newEmptyY] = 0;
 
-			if (HasPass<DeviationType::value>())
+            if (HasPass(m_nDerivation))
 			{
-				if (DistributeStep<newEmptyX, newEmptyY,
-					emptyXOffset, emptyYOffset, DeviationType::value - 1>())
+                if ((--m_nDerivation > 0)
+                        ? DistributeStep<newEmptyX, newEmptyY, emptyXOffset, emptyYOffset, false>()
+                        : DistributeStep<newEmptyX, newEmptyY, emptyXOffset, emptyYOffset, true>())
+                    goto found;
 
-					goto found;
+                ++m_nDerivation;
 			}
 
 			m_boardState.m_cells[newEmptyX][newEmptyY]
@@ -902,12 +883,11 @@ private:
 		{
 			m_boardState.m_cells[oldEmptyX][oldEmptyY] = cell;
 
-			if (DistributeStep<newEmptyX, newEmptyY,
-				emptyXOffset, emptyYOffset, DeviationType::value>())
-				goto found;
+            if (DistributeStep<newEmptyX, newEmptyY, emptyXOffset, emptyYOffset, false>())
+                goto found;
 
-			m_boardState.m_cells[newEmptyX][newEmptyY]
-			= m_boardState.m_cells[oldEmptyX][oldEmptyY];
+            m_boardState.m_cells[newEmptyX][newEmptyY]
+    			= m_boardState.m_cells[oldEmptyX][oldEmptyY];
 
 			if (Next::Do(this))
 				return true;
@@ -922,7 +902,7 @@ found:
 
 	template <int oldEmptyX, int oldEmptyY,
 		int emptyXOffset, int emptyYOffset, typename Next>
-		bool DoMakeStep0()
+        bool DoMakeStep(Int2Type_<true>)
 	{
 		enum { newEmptyX = oldEmptyX + emptyXOffset };
 		enum { newEmptyY = oldEmptyY + emptyYOffset };
@@ -938,7 +918,7 @@ found:
 			m_boardState.m_cells[oldEmptyX][oldEmptyY] = cell;
 
 			if (DistributeStep<newEmptyX, newEmptyY,
-    				emptyXOffset, emptyYOffset, 0>()
+    				emptyXOffset, emptyYOffset, true>()
 				|| (0 == newEmptyX && 0 == newEmptyY)
 				&& m_boardState.IsFinalPositionCandidate())
 			{
