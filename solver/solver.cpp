@@ -639,29 +639,22 @@ one:
 			&& VerticalLinearConflictTest<2>(count);
 	}
 
-	inline bool HasPass(int derivation)
-	{
-        if (1 == derivation)
-		{
-			return HasLastMoves() 
-				&& HasCornerTiles()
-				&& HasNoHorizontalLinearConflict<2>()
-				&& HasNoVerticalLinearConflict<2>()
-				// Intersects with other tests but can be used here
-				&& HasNoHorizontalLinearConflict<1>()
-				&& HasNoVerticalLinearConflict<1>()
-				&& HasNoHorizontalLinearConflict<3>()
-				&& HasNoVerticalLinearConflict<3>()
+    inline bool HasSingleConflictPass()
+    {
+        return HasLastMoves()
+            && HasCornerTiles()
+            && HasNoHorizontalLinearConflict<2>()
+            && HasNoVerticalLinearConflict<2>()
+            // Intersects with other tests but can be used here
+            && HasNoHorizontalLinearConflict<1>()
+            && HasNoVerticalLinearConflict<1>()
+            && HasNoHorizontalLinearConflict<3>()
+            && HasNoVerticalLinearConflict<3>()
 
-				&& HasNoHorizontalLinearConflict0()
-				&& HasNoVerticalLinearConflict0()
-				;
-		}
-		else
-		{
-            return MultiTilesTest(derivation);
-		}
-	}
+            && HasNoHorizontalLinearConflict0()
+            && HasNoVerticalLinearConflict0();
+    }
+
 
 	// Solution search routines
 	template <int X, int Y, bool edge>
@@ -866,15 +859,19 @@ private:
 			m_boardState.m_cells[oldEmptyX][oldEmptyY] = cell;
 			m_boardState.m_cells[newEmptyX][newEmptyY] = 0;
 
-            if (HasPass(m_nDerivation))
-			{
-                if ((--m_nDerivation > 0)
-                        ? DistributeStep<newEmptyX, newEmptyY, emptyXOffset, emptyYOffset, false>()
-                        : DistributeStep<newEmptyX, newEmptyY, emptyXOffset, emptyYOffset, true>())
-                    goto found;
-
-                ++m_nDerivation;
-			}
+            if (m_nDerivation > 1)
+            {
+                if (MultiTilesTest(m_nDerivation))
+                {
+                    --m_nDerivation;
+                    if (DistributeStep<newEmptyX, newEmptyY, emptyXOffset, emptyYOffset, false>())
+                        goto found;
+                    ++m_nDerivation;
+                }
+            }
+            else if (HasSingleConflictPass()
+                    && DistributeStep<newEmptyX, newEmptyY, emptyXOffset, emptyYOffset, true>())
+                goto found;
 
 			m_boardState.m_cells[newEmptyX][newEmptyY]
     			= m_boardState.m_cells[oldEmptyX][oldEmptyY];
