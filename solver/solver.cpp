@@ -43,7 +43,7 @@ unsigned int GetBitsNumber(unsigned int v) // count the number of bits set in v
 
 
 
-typedef unsigned int Cell;
+using Cell = unsigned int;
 
 inline int GetManhattanChange(int pos, int newValue, int dir)
 {
@@ -88,7 +88,7 @@ class BoardState
 	template <int Y>
 	struct FinalPosition<DIMENSION, Y>
 	{
-		static bool Is(const BoardState&)
+		static bool Is(const BoardState& /*unused*/)
 		{
 			return true;
 		}
@@ -123,12 +123,12 @@ class Solver
 
 	inline bool HasCornerTiles()
 	{
-		return !((8 == m_boardState.m_cells[2][0] || 13 == m_boardState.m_cells[3][1]) 
-			&& 12 != m_boardState.m_cells[3][0]
-		|| (2 == m_boardState.m_cells[0][2] || 7 == m_boardState.m_cells[1][3]) 
-			&& 3 != m_boardState.m_cells[0][3]
-		|| (14 == m_boardState.m_cells[3][2] || 11 == m_boardState.m_cells[2][3]) 
-			&& 15 != m_boardState.m_cells[3][3]);
+		return ((8 != m_boardState.m_cells[2][0] && 13 != m_boardState.m_cells[3][1]) 
+			|| 12 == m_boardState.m_cells[3][0])
+		&& ((2 != m_boardState.m_cells[0][2] && 7 != m_boardState.m_cells[1][3]) 
+			|| 3 == m_boardState.m_cells[0][3])
+		&& ((14 != m_boardState.m_cells[3][2] && 11 != m_boardState.m_cells[2][3]) 
+			|| 15 == m_boardState.m_cells[3][3]);
 	}
 
 
@@ -168,12 +168,7 @@ class Solver
 		}
 	one:
 		newValue = m_boardState.m_cells[row][0];
-		if (newValue > value && newValue < (row + 1) * DIMENSION)
-		{
-			return false;
-		}
-
-		return true;
+		return !(newValue > value && newValue < (row + 1) * DIMENSION);
 	}
 
 
@@ -213,12 +208,7 @@ two:
 		}
 one:
 		newValue = m_boardState.m_cells[0][col];
-		if (newValue > value && col == newValue % DIMENSION)
-		{
-			return false;
-		}
-
-		return true;
+		return !(newValue > value && col == newValue % DIMENSION);
 	}
 
 
@@ -250,10 +240,7 @@ two:
 			return false;
 one:
 		newValue = m_boardState.m_cells[row][0];
-		if (c3 == newValue || c2 == newValue)
-			return false;
-
-		return true;
+		return !(c3 == newValue || c2 == newValue);
 	}
 
 	template <int col, int c1, int c2, int c3>
@@ -284,10 +271,7 @@ two:
 			return false;
 one:
 		newValue = m_boardState.m_cells[0][col];
-		if (c3 == newValue || c2 == newValue)
-			return false;
-
-		return true;
+		return !(c3 == newValue || c2 == newValue);
 	}
 
 	//*
@@ -318,10 +302,7 @@ two:
 			return false;
 one:
 		newValue = m_boardState.m_cells[0][0];
-		if (newValue < 4 && newValue > value)
-			return false;
-
-		return true;
+		return !(newValue < 4 && newValue > value);
 	}
 
 	inline bool HasNoVerticalLinearConflict0()
@@ -351,12 +332,7 @@ two:
 			return false;
 one:
 		newValue = m_boardState.m_cells[0][0];
-		if (12 == newValue || 8 == newValue)
-		{
-			return false;
-		}
-
-		return true;
+		return !(12 == newValue || 8 == newValue);
 	}
 	//*/
 
@@ -408,12 +384,7 @@ two:
 		}
 one:
 		newValue = m_boardState.m_cells[row][0];
-		if (newValue > value && newValue < (row + 1) * DIMENSION && --count == 0)
-		{
-			return false;
-		}
-
-		return true;
+		return !(newValue > value && newValue < (row + 1) * DIMENSION && --count == 0);
 	}
 
 	template <int col>
@@ -452,12 +423,7 @@ two:
 		}
 one:
 		newValue = m_boardState.m_cells[0][col];
-		if (newValue > value && col == newValue % DIMENSION && --count == 0)
-		{
-			return false;
-		}
-
-		return true;
+		return !(newValue > value && col == newValue % DIMENSION && --count == 0);
 	}
 
 
@@ -490,10 +456,7 @@ two:
 			return false;
 one:
 		newValue = m_boardState.m_cells[row][0];
-		if (c2 == newValue)
-			return false;
-
-		return true;
+		return c2 != newValue;
 	}
 
 	template <int col, int c1, int c2>
@@ -524,10 +487,7 @@ two:
 			return false;
 one:
 		newValue = m_boardState.m_cells[0][col];
-		if (c2 == newValue)
-			return false;
-
-		return true;
+		return c2 != newValue;
 	}
 
 
@@ -682,7 +642,7 @@ one:
 	template <int Y, bool edge>
 	struct DispatchStep<-1, Y, edge>
 	{
-		static bool Do(Solver*, int, int)
+		static bool Do(Solver* /*unused*/, int /*unused*/, int /*unused*/)
 		{
 			return false;
 		}
@@ -749,7 +709,7 @@ one:
 
 	struct DoNothing
 	{
-		static bool Do (Solver*) { return false; }
+		static bool Do (Solver* /*unused*/) { return false; }
 	};
 
 
@@ -808,8 +768,8 @@ public:
 
 		if (!m_bTopLeftBlank)
 		{
-			vector<unsigned char>::iterator end = m_solution.end();
-			for (vector<unsigned char>::iterator it = m_solution.begin()
+			auto end = m_solution.end();
+			for (auto it = m_solution.begin()
 				; it != end
 				; ++it)
 			{
@@ -840,7 +800,7 @@ private:
 
 	template <int oldEmptyX, int oldEmptyY,
 		int emptyXOffset, int emptyYOffset, typename Next>
-        bool DoMakeStep(Int2Type_<false>)
+        bool DoMakeStep(Int2Type_<false> /*unused*/)
 	{
 		enum { newEmptyX = oldEmptyX + emptyXOffset };
 		enum { newEmptyY = oldEmptyY + emptyYOffset };
@@ -899,7 +859,7 @@ found:
 
 	template <int oldEmptyX, int oldEmptyY,
 		int emptyXOffset, int emptyYOffset, typename Next>
-        bool DoMakeStep(Int2Type_<true>)
+        bool DoMakeStep(Int2Type_<true> /*unused*/)
 	{
 		enum { newEmptyX = oldEmptyX + emptyXOffset };
 		enum { newEmptyY = oldEmptyY + emptyYOffset };
@@ -932,7 +892,7 @@ found:
 };
 
 
-int Solve(unsigned char* pInput, unsigned char* pResult)
+int Solve(const unsigned char* pInput, unsigned char* pResult)
 {
 	// Calculate parity
 	unsigned int bitMask = 0;

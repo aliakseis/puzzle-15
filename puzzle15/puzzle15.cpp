@@ -6,6 +6,7 @@
 
 #include <QKeyEvent>
 #include <QThreadPool>
+#include <memory>
 
 
 const char idleStatus[] = "Hit F11 to start computation ...";
@@ -40,7 +41,7 @@ puzzle15::puzzle15(QWidget *parent, Qt::WindowFlags flags)
 				continue;
 			}
 
-            MovableButton* button = new MovableButton(this, row, col);
+            auto* button = new MovableButton(this, row, col);
 
             QString text;
             text.sprintf("%d", i);
@@ -51,7 +52,7 @@ puzzle15::puzzle15(QWidget *parent, Qt::WindowFlags flags)
             i++;
 		}
 	}
-    MovableButton* button = new MovableButton(this, 3, 3);
+    auto* button = new MovableButton(this, 3, 3);
     ui.centralWidget->setCellWidget(3, 3, button);
     button->setFlat(true);
     button->setEnabled(false);
@@ -60,9 +61,7 @@ puzzle15::puzzle15(QWidget *parent, Qt::WindowFlags flags)
 }
 
 puzzle15::~puzzle15()
-{
-
-}
+= default;
 
 
 void puzzle15::onButtonRelease(MovableButton* buttonBeingMoved, int offsetX, int offsetY)
@@ -185,7 +184,7 @@ void puzzle15::AnimatePiece(int row, int col)
     newBtn->setProperty("flat", false);
     newBtn->setEnabled(true);
 
-    animation.reset(new QPropertyAnimation(newBtn, "geometry"));
+    animation = std::make_unique<QPropertyAnimation>(newBtn, "geometry");
 
     animation->setDuration(300);
     QRect oldRect(oldBtn->rect());
@@ -226,7 +225,7 @@ void puzzle15::keyPressEvent(QKeyEvent* event)
         }
     }
 
-    Worker* worker = new Worker(data);
+    auto* worker = new Worker(data);
 
     connect(worker, SIGNAL(finished(QVector<unsigned char>)), SLOT(onFinished(QVector<unsigned char>)));
 
@@ -268,7 +267,7 @@ void puzzle15::animationStep()
         return;
     }
 
-    MoveStatus nextMove = (MoveStatus) *solution;
+    auto nextMove = (MoveStatus) *solution;
     ++solution;
 
 	int newCol = emptyX;

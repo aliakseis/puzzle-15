@@ -14,8 +14,7 @@ MovableButton::MovableButton(puzzle15* parent, int row, int col)
 
 
 MovableButton::~MovableButton()
-{
-}
+= default;
 
 void MovableButton::mousePressEvent(QMouseEvent *event)
 {

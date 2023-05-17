@@ -6,4 +6,4 @@ enum { DIMENSION = 4 };
 
 enum MoveStatus { Left, Up, Right, Down };
 
-int Solve(unsigned char* pInput, unsigned char* pResult);
+int Solve(const unsigned char* pInput, unsigned char* pResult);

@@ -12,8 +12,7 @@ Worker::Worker(const Data& data)
 
 
 Worker::~Worker()
-{
-}
+= default;
 
 void Worker::run()
 {
