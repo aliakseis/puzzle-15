@@ -75,11 +75,10 @@ void puzzle15::onButtonRelease(MovableButton* buttonBeingMoved, int offsetX, int
     int row = buttonBeingMoved->row();
     int col = buttonBeingMoved->col();
 
-    int newCol, newRow;
     if (offsetX != 0 || offsetY != 0)
     {
-        newCol = col + offsetX;
-        newRow = row + offsetY;
+        int newCol = col + offsetX;
+        int newRow = row + offsetY;
 
         if (newCol < 0)
             newCol = 0;
@@ -126,8 +125,8 @@ void puzzle15::onButtonRelease(MovableButton* buttonBeingMoved, int offsetX, int
     }
     else
     {
-        newCol = emptyX;
-        newRow = emptyY;
+        int newCol = emptyX;
+        int newRow = emptyY;
 
         if (newCol == col)
         {

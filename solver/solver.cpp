@@ -18,10 +18,6 @@
 
 #include <type_traits>
 
-using std::cout;
-using std::cerr;
-using std::setw;
-
 using std::vector;
 
 
@@ -90,7 +86,7 @@ class BoardState
 	};
 
 public:
-	bool IsFinalPositionCandidate()
+    bool IsFinalPositionCandidate() const
 	{
 		return FinalPosition<0, 1>::Is(*this);
 	}
