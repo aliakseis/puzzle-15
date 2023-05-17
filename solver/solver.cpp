@@ -16,6 +16,7 @@
 
 #include <memory.h>
 
+#include <type_traits>
 
 using std::cout;
 using std::cerr;
@@ -23,12 +24,6 @@ using std::setw;
 
 using std::vector;
 
-
-
-template<int v> struct Int2Type_
-{
-	enum { value = v };
-};
 
 unsigned int GetBitsNumber(unsigned int v) // count the number of bits set in v
 {
@@ -656,7 +651,7 @@ one:
 		static bool Do (Solver* pSolver)
 		{
             return pSolver->DoMakeStep<oldEmptyX, oldEmptyY,
-                emptyXOffset, emptyYOffset, Next>(Int2Type_<edge>());
+                emptyXOffset, emptyYOffset, Next>(std::bool_constant<edge>());
         }
 	};
 
@@ -800,7 +795,7 @@ private:
 
 	template <int oldEmptyX, int oldEmptyY,
 		int emptyXOffset, int emptyYOffset, typename Next>
-        bool DoMakeStep(Int2Type_<false> /*unused*/)
+        bool DoMakeStep(std::false_type /*unused*/)
 	{
 		enum { newEmptyX = oldEmptyX + emptyXOffset };
 		enum { newEmptyY = oldEmptyY + emptyYOffset };
@@ -859,7 +854,7 @@ found:
 
 	template <int oldEmptyX, int oldEmptyY,
 		int emptyXOffset, int emptyYOffset, typename Next>
-        bool DoMakeStep(Int2Type_<true> /*unused*/)
+        bool DoMakeStep(std::true_type /*unused*/)
 	{
 		enum { newEmptyX = oldEmptyX + emptyXOffset };
 		enum { newEmptyY = oldEmptyY + emptyYOffset };
