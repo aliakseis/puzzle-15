@@ -163,7 +163,7 @@ class Solver
 		}
 	one:
 		newValue = m_boardState.m_cells[row][0];
-		return !(newValue > value && newValue < (row + 1) * DIMENSION);
+		return newValue <= value || newValue >= (row + 1) * DIMENSION;
 	}
 
 
@@ -203,7 +203,7 @@ two:
 		}
 one:
 		newValue = m_boardState.m_cells[0][col];
-		return !(newValue > value && col == newValue % DIMENSION);
+		return newValue <= value || col != newValue % DIMENSION;
 	}
 
 
@@ -235,7 +235,7 @@ two:
 			return false;
 one:
 		newValue = m_boardState.m_cells[row][0];
-		return !(c3 == newValue || c2 == newValue);
+		return c3 != newValue && c2 != newValue;
 	}
 
 	template <int col, int c1, int c2, int c3>
@@ -266,7 +266,7 @@ two:
 			return false;
 one:
 		newValue = m_boardState.m_cells[0][col];
-		return !(c3 == newValue || c2 == newValue);
+		return c3 != newValue && c2 != newValue;
 	}
 
 	//*
@@ -297,7 +297,7 @@ two:
 			return false;
 one:
 		newValue = m_boardState.m_cells[0][0];
-		return !(newValue < 4 && newValue > value);
+		return newValue >= 4 || newValue <= value;
 	}
 
 	inline bool HasNoVerticalLinearConflict0()
@@ -327,7 +327,7 @@ two:
 			return false;
 one:
 		newValue = m_boardState.m_cells[0][0];
-		return !(12 == newValue || 8 == newValue);
+		return 12 != newValue && 8 != newValue;
 	}
 	//*/
 
@@ -379,7 +379,7 @@ two:
 		}
 one:
 		newValue = m_boardState.m_cells[row][0];
-		return !(newValue > value && newValue < (row + 1) * DIMENSION && --count == 0);
+		return newValue <= value || newValue >= (row + 1) * DIMENSION || --count != 0;
 	}
 
 	template <int col>
@@ -418,7 +418,7 @@ two:
 		}
 one:
 		newValue = m_boardState.m_cells[0][col];
-		return !(newValue > value && col == newValue % DIMENSION && --count == 0);
+		return newValue <= value || col != newValue % DIMENSION || --count != 0;
 	}
 
 
