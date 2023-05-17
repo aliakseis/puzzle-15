@@ -34,7 +34,7 @@ private:
     Ui::puzzle15Class ui;
     int emptyX, emptyY;
 
-    std::auto_ptr<QPropertyAnimation> animation;
+    std::unique_ptr<QPropertyAnimation> animation;
 
     QVector<unsigned char> result;
     QVector<unsigned char>::iterator solution;
